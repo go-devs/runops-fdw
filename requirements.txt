@@ -1,0 +1,5 @@
+requests~=2.27.1
+runops~=0.0.1
+multicorn~=1.4.0
+setuptools~=60.2.0
+PyPika~=0.48.9

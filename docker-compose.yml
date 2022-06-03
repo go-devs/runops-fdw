@@ -1,0 +1,19 @@
+---
+version: '3.1'
+services:
+  runops:
+    image: runops
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/opt/runops:cached
+    environment:
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5433:5432"
+    secrets:
+      - runops_config
+secrets:
+  runops_config:
+    file: ~/.runops/config
