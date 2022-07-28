@@ -63,9 +63,10 @@ def postgres_schema_tables(target, schema, options, restriction_type, restricts)
 def execute_postgres_query(fdw, quals, columns, sortkeys):
     schema, table = fdw.resource.split('.')
     sql = generate_query(PostgreSQLQuery, schema, table, columns, quals, sortkeys, fdw.limit)
+    sql = 'select row_to_json(t) from (' + str(sql) + ') t'
 
     data = utils.create_task_and_return_logs(fdw.target, str(sql))
-    return utils.read_tsv(columns, data)
+    return utils.read_json(data)
 
 
 def generate_query(cls, schema, table, columns, quals, sortkeys, limit):

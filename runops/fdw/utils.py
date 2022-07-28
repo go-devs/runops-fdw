@@ -1,3 +1,4 @@
+import json
 import re
 import requests
 
@@ -21,6 +22,13 @@ def read_tsv(columns, data):
         if len(values) > len(column_data):
             continue
         yield {values[i].column_name: to_column_type(values[i], column_data[i]) for i in range(len(values))}
+
+
+def read_json(data):
+    body = data.split('\n', 1)[1]
+    body = re.sub(r'(\n\(\d+ rows\))?\n$', '', body)
+    for row in body.split('\n'):
+        yield json.loads(row)
 
 
 def to_column_type(column: ColumnDefinition, value):
