@@ -8,11 +8,12 @@ from pypika import MySQLQuery, Schema, Table, EmptyCriterion, Order
 import runops.fdw.utils as utils
 
 
-def get_mysql_introspect_query(restriction_type, restricts) -> str:
+def get_mysql_introspect_query(schema, restriction_type, restricts) -> str:
     columns = Schema('INFORMATION_SCHEMA').COLUMNS
     query = MySQLQuery.from_(columns) \
         .select('TABLE_SCHEMA', 'TABLE_NAME', 'COLUMN_NAME', 'DATA_TYPE', 'IS_NULLABLE', 'COLUMN_KEY') \
         .where(columns.TABLE_SCHEMA.notin(['information_schema', 'performance_schema', 'mysql'])) \
+        .where(columns.table_schema == schema) \
         .where(
         {
             'limit': columns.TABLE_NAME.isin(restricts),
@@ -23,10 +24,10 @@ def get_mysql_introspect_query(restriction_type, restricts) -> str:
     return str(query)
 
 
-def mysql_schema_tables(target, options, restriction_type, restricts):
+def mysql_schema_tables(target, schema, options, restriction_type, restricts):
     code, t = api.create_task(
         target=options['target'],
-        script=get_mysql_introspect_query(restriction_type, restricts),
+        script=get_mysql_introspect_query(schema, restriction_type, restricts),
         message='mysql database introspection'
     )
     if code != HTTPStatus.CREATED:

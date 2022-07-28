@@ -40,7 +40,7 @@ class RunopsForeignDataWrapper(ForeignDataWrapper, ABC):
         if code != HTTPStatus.OK:
             throw_runops_error(code, f"Failed retrieving target {options['target']} - {target['message']}")
         if target['type'] == 'mysql':
-            return mysql_schema_tables(target, options, restriction_type, restricts)
+            return mysql_schema_tables(target, schema, options, restriction_type, restricts)
         if target['type'] == 'postgres':
             return postgres_schema_tables(target, schema, options, restriction_type, restricts)
 
